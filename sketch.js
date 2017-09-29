@@ -6,8 +6,11 @@ var oneclick = 0;
 var turnindex = -1;
 var turn = 0;
 var grid = [];
+var sgrid = [];
 var freeturn = false;
 var endGame = false;
+
+//setInterval(timer, 500);
 function setup() {
     createCanvas(700, 700);
     background(51);
@@ -28,10 +31,9 @@ function setup() {
 }
 
 function draw() {
+    background(51);
 // Updating thelarge squares, which will then update the smaller ones they contain
-    indexvalue = 0;
-    console.log(squares[0].boxes[0].state);
-  
+    indexvalue = 0;  
     for(var i = 0; i < squares.length; i++) {
         for(var j = 0; j < squares[i].boxes.length; j++) {
         squares[i].boxes[j].update();
@@ -54,12 +56,17 @@ function draw() {
     for(var i = 0; i< squares.length; i++) {
         if(squares[i].index == turnindex) {
             stroke(20, 255, 40);
+            noFill();
             rect(squares[i].x, squares[i].y, squares[i].size, squares[i].size);
+        }
+        if(squares[i].index == turnindex) {
+            console.log(squares[i].state);
         }
     }
     if(turnindex == -1 || freeturn) {
         for(var i = 0; i< squares.length; i++) {
             if(squares[i].state == 0) {
+                noFill();
             stroke(20, 255, 40);
             rect(squares[i].x, squares[i].y, squares[i].size, squares[i].size);
             }
@@ -67,9 +74,10 @@ function draw() {
         }
         for(var i = 0; i< squares.length; i++) {
         if(squares[i].state != 0) {
+            noFill();
                 stroke(200, 200, 10);
                 rect(squares[i].x, squares[i].y, squares[i].size, squares[i].size);
-
+            
             }
         }
     }
@@ -80,23 +88,24 @@ function draw() {
     }
     
 // The main part of the program: detecting click events and drawing crosses or circles 
-    
+  loop1:  
     for(var i = 0; i< squares.length; i++) {
-       if((freeturn && turnindex != squares[i].index)||turnindex == -1 || turnindex == squares[i].index && squares[i].state == 0) {
+       if(((freeturn && squares[i].state == 0) && turnindex != squares[i].index)||turnindex == -1 || turnindex == squares[i].index && squares[i].state == 0) {
            for(var j = 0; j < squares[i].boxes.length; j++) {
-           let boxj = squares[i].boxes[j];
+           var boxj = squares[i].boxes[j];
            if(mouseX < boxj.x + boxj.size/2 && mouseX > boxj.x - boxj.size/2
               && mouseY < boxj.y + boxj.size/2 && mouseY > boxj.y - boxj.size/2
-              && oneclick == 1 && boxj.state == 0) {
+              && oneclick == 1 && boxj.state == 0 && squares[i].state == 0) {
                console.log('clicked in box ' + j);
                turnindex = j;
                if(turn % 2 == 0) {
                    
-                   boxj.state = 1;
+                   squares[i].boxes[j].state = 1;
                    
                }else {
                   
-                   boxj.state = 2;
+                   squares[i].boxes[j].state = 2;
+                   
                }
                var sqchildren = squares[i].boxes;
                
@@ -118,11 +127,23 @@ function draw() {
                     || (grid[1] == grid[4] && grid[1] == grid[7] && grid[1] != 0 && squares[i].state == 0)
                     || (grid[2] == grid[5] && grid[2] == grid[8] && grid[2] != 0 && squares[i].state == 0)) {
                        if(turn % 2 == 0) {
+                           if(squares[i].state == 0) {
                            squares[i].state = 1;
-                           
+                               print('new square locked in blue : ' + i);
+                               turn++;
+                               grid = [];
+
+                               break loop1;
+                           }
                        }else{
+                           if(squares[i].state == 0) {
                            squares[i].state = 2;
-                           
+                               print('new square locked in red : ' + i);
+                               turn++;
+                               grid = [];
+
+                               break loop1;
+                           }
                        }
                    }
                var fullcount = 0;
@@ -144,10 +165,11 @@ function draw() {
         grid = [];
     }
 // checking for a full win situation
-    var sgrid = [];
+    sgrid = [];
 for(var s = 0; s < squares.length; s++) {
     sgrid.push(squares[s].state);
 }
+    
     if((sgrid[0] == sgrid[8] && sgrid[0] == sgrid[4] && sgrid[0] != 0 && sgrid[0] != 3)
        || (sgrid[6] == sgrid[4] && sgrid[6] == sgrid[2] && sgrid[6] != 0 && sgrid[0] != 3)
        || (sgrid[0] == sgrid[1] && sgrid[0] == sgrid[2] && sgrid[0] != 0 && sgrid[0] != 3)
@@ -158,13 +180,21 @@ for(var s = 0; s < squares.length; s++) {
        || (sgrid[2] == sgrid[5] && sgrid[2] == sgrid[8] && sgrid[2] != 0 && sgrid[0] != 3)) {
         if(turn % 2 == 0) {
             textSize(32);
+            noStroke();
             fill(255, 20, 0);
             text("Player 2 won!", width/2 - 100, height*0.75);
+            fill(255, 150, 0);
+            textSize(24);
+            text('(in ' + turn + ' turns)',  width/2 - 60, height*0.80);
                    
                }else {
+            noStroke();
             textSize(32);
             fill(0, 20, 255);
             text("Player 1 won!", width/2 - 100, height*0.75);
+            fill(0, 150, 255);
+            textSize(24);
+            text('(in ' + turn + ' turns)',  width/2 - 60, height*0.80);
                }
         endGame = true;
     }
@@ -178,3 +208,8 @@ for(var s = 0; s < squares.length; s++) {
 function mousePressed() {
    oneclick = 1;
 }
+
+/*function timer() {
+    if(typeof(sgrid) != 'undefined')
+    print(sgrid);
+}*/

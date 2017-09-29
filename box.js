@@ -10,7 +10,7 @@ function Box(x, y, index, parentx, parenty) {
     
     this.update = function () {
         
-            
+            strokeWeight(3);
             stroke(255);
             noFill();
             rect(this.x, this.y, this.size, this.size);
