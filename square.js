@@ -34,12 +34,12 @@ function Square(x, y, index) {
         stroke(200, 200, 10);
         rect(this.x, this.y, this.size, this.size);
         if(this.state == 1) {
-            fill(50, 50, 190, 100);
+            fill(50, 50, 250, 200);
             rect(this.x, this.y, this.size, this.size);
 
         }
         if(this.state == 2){
-            fill(190, 50, 50, 100);
+            fill(190, 50, 50, 200);
             rect(this.x, this.y, this.size, this.size);
         }
         if(this.state == 3){
