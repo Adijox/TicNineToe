@@ -31,7 +31,7 @@ function setup() {
 }
 
 function draw() {
-    background(51);
+    background(40);
 // Updating thelarge squares, which will then update the smaller ones they contain
     indexvalue = 0;  
     for(var i = 0; i < squares.length; i++) {
